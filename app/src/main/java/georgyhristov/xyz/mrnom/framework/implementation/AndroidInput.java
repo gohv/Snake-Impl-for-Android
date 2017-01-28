@@ -22,10 +22,7 @@ public class AndroidInput implements Input {
     public AndroidInput(Context context, View view, float scaleX,float scaleY) {
         accelerometerHandler = new AccelerometerHandler(context);
         keyboardHandler = new KeyboardHandler(view);
-        if(Integer.parseInt(Version.id()) < 5){
-            //obsolete call !
-            touchHandler = new SingleTouchHandler(view,scaleX,scaleY);
-        }
+
         touchHandler = new MultiTouchHandler(view,scaleX,scaleY);
     }
 

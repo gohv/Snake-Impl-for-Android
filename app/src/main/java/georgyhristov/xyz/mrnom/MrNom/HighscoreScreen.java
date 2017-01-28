@@ -55,7 +55,7 @@ public class HighscoreScreen extends Screen {
             y += 50;
         }
 
-        g.drawPixmap(Assets.buttons, 0, 416, 64, 64, 64, 64);
+         g.drawPixmap(Assets.buttons, 0, 416, 64, 64, 64, 64);
     }
 
     public void drawText(Graphics g, String line, int x, int y) {
