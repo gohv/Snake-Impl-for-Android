@@ -1,5 +1,7 @@
 package georgyhristov.xyz.mrnom.MrNom;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,6 +18,7 @@ public class Snake {
     public List<SnakePart> parts = new ArrayList<SnakePart>();
     public int direction;
 
+
     public Snake() {
         direction = UP;
         parts.add(new SnakePart(5, 6));
@@ -24,21 +27,21 @@ public class Snake {
     }
 
     public void turnLeft() {
-        direction += 1;
-        if(direction > RIGHT)
-            direction = UP;
+        direction = LEFT;
     }
 
     public void turnRight() {
-        direction -= 1;
-        if(direction < UP)
-            direction = RIGHT;
+        direction = RIGHT;
     }
-    public void turnUp(){
-        direction += 2;
-        if (direction > DOWN)
-            direction = RIGHT;
+
+    public void turnUp() {
+        direction = UP;
     }
+
+    public void turnDown() {
+        direction = DOWN;
+    }
+
 
     public void eat() {
         SnakePart end = parts.get(parts.size()-1);

@@ -14,17 +14,13 @@ import georgyhristov.xyz.mrnom.framework.Screen;
  * Created by gohv on 23.01.17.
  */
 public class GameScreen extends Screen {
-    enum GameState {
-        Ready,
-        Running,
-        Paused,
-        GameOver
-    }
-
     GameState state = GameState.Ready;
     World world;
     int oldScore = 0;
     String score = "0";
+
+    private boolean isRightLeftAllowed = true;
+    private boolean isUpDownAllowed = false;
 
     public GameScreen(Game game) {
         super(game);
@@ -35,11 +31,11 @@ public class GameScreen extends Screen {
     public void update(float deltaTime) {
         List<Input.TouchEvent> touchEvents = game.getInput().getTouchEvents();
         game.getInput().getKeyEvent();
-
         if(state == GameState.Ready)
             updateReady(touchEvents);
-        if(state == GameState.Running)
+        if(state == GameState.Running) {
             updateRunning(touchEvents, deltaTime);
+       }
         if(state == GameState.Paused)
             updatePaused(touchEvents);
         if(state == GameState.GameOver)
@@ -53,8 +49,10 @@ public class GameScreen extends Screen {
 
     private void updateRunning(List<Input.TouchEvent> touchEvents, float deltaTime) {
         int len = touchEvents.size();
+
         for(int i = 0; i < len; i++) {
             Input.TouchEvent event = touchEvents.get(i);
+
             if(event.type == Input.TouchEvent.TOUCH_UP) {
                 if(event.x < 64 && event.y < 64) {
                     if(Settings.soundEnabled)
@@ -64,15 +62,25 @@ public class GameScreen extends Screen {
                 }
             }
             if(event.type == Input.TouchEvent.TOUCH_DOWN) {
-                if(event.x < 64 && event.y > 416) {
+                 if(event.x < 64 && event.y > 200 && isRightLeftAllowed == true) {
                     world.snake.turnLeft();
-               }
-                if(event.x > 256 && event.y > 416) {
+                    isRightLeftAllowed = false;
+                    isUpDownAllowed = true;
+                } else if(event.x > 256 && event.y > 200 && isRightLeftAllowed == true) {
                     world.snake.turnRight();
+                    isRightLeftAllowed = false;
+                    isUpDownAllowed = true;
+                }else if(event.x > 100 && event.y < 200 && isUpDownAllowed == true){
+                    world.snake.turnUp();
+                    isRightLeftAllowed = true;
+                    isUpDownAllowed = false;
+                } else if(event.x < 380 && event.y > 300 && isUpDownAllowed == true){
+                    world.snake.turnDown();
+                    isRightLeftAllowed = true;
+                    isUpDownAllowed = false;
                 }
             }
         }
-
         world.update(deltaTime);
         if(world.gameOver) {
             if(Settings.soundEnabled)
@@ -85,6 +93,7 @@ public class GameScreen extends Screen {
             if(Settings.soundEnabled)
                 Assets.eat.play(1);
         }
+        game.getInput().getTouchEvents().clear();
     }
 
     private void updatePaused(List<Input.TouchEvent> touchEvents) {
@@ -194,8 +203,8 @@ public class GameScreen extends Screen {
     private void drawRunningUI() {
         Graphics g = game.getGraphics();
 
-        g.drawPixmap(Assets.buttons, 0, 0, 64, 128, 64, 64);
-        g.drawLine(0, 416, 480, 416, Color.BLACK);// x = from y = to x2,y2 = fat
+        g.drawPixmap(Assets.buttons, 0, 0, 64, 128, 64, 64);//pause button
+        g.drawLine(0, 416, 480, 416, Color.BLACK);// bottom line
         g.drawPixmap(Assets.buttons, 0, 416, 64, 64, 64, 64);
         g.drawPixmap(Assets.buttons, 256, 416, 0, 64, 64, 64);
     }
@@ -259,6 +268,13 @@ public class GameScreen extends Screen {
     @Override
     public void dispose() {
 
+    }
+
+    enum GameState {
+        Ready,
+        Running,
+        Paused,
+        GameOver
     }
 
 }
